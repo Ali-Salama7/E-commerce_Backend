@@ -1,5 +1,6 @@
 import prisma from "../config/db.js"
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export class AuthService{
     async registerUser(userData: {name: string, email: string, password: string}) {
@@ -25,4 +26,33 @@ export class AuthService{
         const {password, ...userWithoutPassword} = newUser
         return userWithoutPassword
     }
+
+    async loginUser(userData: {email: string, password: string}){
+        const user = await prisma.user.findUnique({
+            where: {
+                email: userData.email,
+            }
+        })
+
+        if(!user){
+            throw new Error("Invalid email or password");
+        }
+
+        const passwordIsValid = await bcrypt.compare(userData.password, user.password)
+
+        if(!passwordIsValid){
+            throw new Error("Invalid email or password");
+        }
+
+        const token = jwt.sign(
+            {userID: user.id, role: user.role},
+            process.env.JWT_SECRET as string,
+            {expiresIn: '7d'}
+        )
+
+        const {password, ...userWithoutPassword} = user
+        return {user: userWithoutPassword, token}
+
+    }
+
 }
