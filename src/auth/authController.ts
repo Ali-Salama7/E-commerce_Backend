@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { validateRegister } from "./authValidator.js";
+import { validateLogin, validateRegister } from "./authValidator.js";
 import { AuthService } from "./authService.js";
 
 const authService = new AuthService()
@@ -18,4 +18,20 @@ export class AuthController{
             return res.status(400).json({error: error.message})
         }
     }
+
+    async login(req: Request, res: Response){
+        try {
+            validateLogin(req.body)
+
+            const user = await authService.loginUser(req.body)
+            res.status(200).json({
+                message: "User logged in",
+                data: user
+            })
+            
+        } catch (error: any) {
+            return res.status(400).json({error: error.message})
+        }
+    }
+
 }
