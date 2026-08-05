@@ -52,4 +52,24 @@ export class OrdersService{
             return order
         })
     }
+
+
+    async getMyOrders(userId: number){
+        return await prisma.order.findMany({
+            where: {
+                userId: userId
+            },
+            include: {
+                items: {
+                    include: {
+                        product: true
+                    }
+                }
+            },
+            orderBy: {
+                createAt: 'desc'
+            }
+        })
+    }
+
 }
