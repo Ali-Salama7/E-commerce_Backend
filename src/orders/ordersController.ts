@@ -26,4 +26,22 @@ export class OrdersController{
             return res.status(400).json({error: error.message})
         }
     }
+
+    async getMyOrders(req: Request, res: Response){
+        try {
+             const user = req.user;
+             if (!user || typeof user === "string") {
+               return res.status(401).json({ error: "Unauthorized" });
+             }
+
+             const userId = (user as JwtPayload).userID;
+
+             const myOrders = await ordersService.getMyOrders(userId);
+             return res.status(200).json({
+               data: myOrders
+             });
+        } catch (error: any) {
+            return res.status(400).json({error: error.message})
+        }
+    }
 }
