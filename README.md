@@ -76,23 +76,17 @@ User ──< Order ──< OrderItem >── Product
    ```bash
    npm install
    ```
-
-3. Copy the environment template and fill in your own values
-   ```bash
-   cp .env.example .env
-   ```
-
-4. Start PostgreSQL via Docker
+3. Start PostgreSQL via Docker
    ```bash
    docker compose up -d
    ```
 
-5. Run database migrations
+4. Run database migrations
    ```bash
    npx prisma migrate dev
    ```
 
-6. Start the development server
+5. Start the development server
    ```bash
    npm run dev
    ```
