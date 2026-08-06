@@ -6,11 +6,11 @@ import { adminMiddleware } from "../middleware/adminMiddleware.js";
 const router = Router()
 const productsController = new ProductsController
 
-router.get('/', (req, res) => productsController.getAllProduct(req, res))
-router.get('/:id', (req, res) => productsController.getProductById(req, res))
-router.post('/', authMiddleware, adminMiddleware, (req, res) => productsController.createProduct(req, res))
-router.put('/:id', authMiddleware, adminMiddleware, (req, res) => productsController.updateProduct(req, res))
-router.delete('/:id', authMiddleware, adminMiddleware, (req, res) => productsController.deleteProduct(req, res))
+router.get('/', (req, res, next) => productsController.getAllProduct(req, res, next))
+router.get('/:id', (req, res, next) => productsController.getProductById(req, res, next))
+router.post('/', authMiddleware, adminMiddleware, (req, res, next) => productsController.createProduct(req, res, next))
+router.put('/:id', authMiddleware, adminMiddleware, (req, res, next) => productsController.updateProduct(req, res, next))
+router.delete('/:id', authMiddleware, adminMiddleware, (req, res, next) => productsController.deleteProduct(req, res, next))
 
 
 export default router

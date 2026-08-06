@@ -1,4 +1,5 @@
 import prisma from "../config/db.js";
+import { NotFoundError } from "../shared/errors.js";
 import { createProductSchema, updateProductSchema } from "./productValidator.js";
 import { z } from "zod";
 
@@ -17,7 +18,7 @@ export class ProductsService{
         })
 
         if(!product){
-            throw new Error("Product not found");
+            throw new NotFoundError("Product not found");
         }
 
         return product
@@ -41,7 +42,7 @@ export class ProductsService{
         })
 
         if(!existingProduct){
-            throw new Error("Product not found");
+            throw new NotFoundError("Product not found");
         }
 
         const cleanData = Object.fromEntries(
@@ -62,7 +63,7 @@ export class ProductsService{
         })
 
         if(!existingProduct){
-            throw new Error("Product not found");
+            throw new NotFoundError("Product not found");
         }
 
         const delProduct = await prisma.product.delete({

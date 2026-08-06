@@ -5,7 +5,7 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 const router = Router()
 const ordersController = new OrdersController()
 
-router.post('/', authMiddleware, (req, res) => ordersController.createOrder(req, res))
-router.get('/my-orders', authMiddleware, (req, res) => ordersController.getMyOrders(req, res))
+router.post('/', authMiddleware, (req, res, next) => ordersController.createOrder(req, res, next))
+router.get('/my-orders', authMiddleware, (req, res, next) => ordersController.getMyOrders(req, res, next))
 
 export default router

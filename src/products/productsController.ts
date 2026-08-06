@@ -1,23 +1,23 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { ProductsService } from "./productsService.js";
 import { createProductSchema, updateProductSchema } from "./productValidator.js";
 
 const productsService = new ProductsService();
 
 export class ProductsController {
-  async getAllProduct(req: Request, res: Response) {
+  async getAllProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const products = await productsService.getAllProducts();
       return res.status(200).json({
         status: "success",
         data: products,
       });
-    } catch (error: any) {
-      return res.status(500).json({ error: error.message });
+    } catch (error) {
+      next(error)
     }
   }
 
-  async getProductById(req: Request, res: Response) {
+  async getProductById(req: Request, res: Response, next: NextFunction) {
     try {
       const product = await productsService.getProductById(
         Number(req.params.id),
@@ -26,12 +26,12 @@ export class ProductsController {
         status: "success",
         data: product,
       });
-    } catch (error: any) {
-      return res.status(500).json({ error: error.message });
+    } catch (error) {
+      next(error)
     }
   }
 
-  async createProduct(req: Request, res: Response) {
+  async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const validatedData = createProductSchema.parse(req.body);
       const create = await productsService.createProduct(validatedData);
@@ -40,11 +40,11 @@ export class ProductsController {
         data: create,
       });
     } catch (error: any) {
-      return res.status(400).json({ error: error.message });
+      next(error)
     }
   }
 
-  async updateProduct(req: Request, res: Response) {
+  async updateProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const validatedData = updateProductSchema.parse(req.body);
       const update = await productsService.updateProduct(
@@ -56,14 +56,11 @@ export class ProductsController {
         data: update,
       });
     } catch (error: any) {
-      if (error.message === "Product not found") {
-        return res.status(404).json({ error: error.message });
-      }
-      return res.status(400).json({ error: error.message });
+        next(error)
     }
   }
 
-  async deleteProduct(req: Request, res: Response) {
+  async deleteProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const delProduct = await productsService.deleteProduct(
         Number(req.params.id),
@@ -73,10 +70,7 @@ export class ProductsController {
         data: delProduct,
       });
     } catch (error: any) {
-      if (error.message === "Product not found") {
-        return res.status(404).json({ error: error.message });
-      }
-      return res.status(400).json({ error: error.message });
+        next(error)
     }
   }
 }

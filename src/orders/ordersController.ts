@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { createOrderSchema } from "./ordersValidator.js";
 import { OrdersService } from "./ordersService.js";
 import type { JwtPayload } from "jsonwebtoken";
@@ -6,7 +6,7 @@ import type { JwtPayload } from "jsonwebtoken";
 const ordersService = new OrdersService()
 
 export class OrdersController{
-    async createOrder(req: Request, res: Response){
+    async createOrder(req: Request, res: Response, next: NextFunction){
         try {
             const validatedData = createOrderSchema.parse(req.body)
 
@@ -23,11 +23,11 @@ export class OrdersController{
                 data: order
             })
         } catch (error: any) {
-            return res.status(400).json({error: error.message})
+            next(error)
         }
     }
 
-    async getMyOrders(req: Request, res: Response){
+    async getMyOrders(req: Request, res: Response, next: NextFunction){
         try {
              const user = req.user;
              if (!user || typeof user === "string") {
@@ -41,7 +41,7 @@ export class OrdersController{
                data: myOrders
              });
         } catch (error: any) {
-            return res.status(400).json({error: error.message})
+            next(error)
         }
     }
 }
