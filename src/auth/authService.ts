@@ -1,6 +1,7 @@
 import prisma from "../config/db.js"
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { BadRequestError, UnauthorizedError } from "../shared/errors.js";
 
 export class AuthService{
     async registerUser(userData: {name: string, email: string, password: string}) {
@@ -9,7 +10,7 @@ export class AuthService{
         })
 
         if(existUser){
-            throw new Error("Email is already in use");
+            throw new BadRequestError("Email is already in use");
             
         }
 
@@ -35,13 +36,13 @@ export class AuthService{
         })
 
         if(!user){
-            throw new Error("Invalid email or password");
+            throw new UnauthorizedError("Invalid email or password");
         }
 
         const passwordIsValid = await bcrypt.compare(userData.password, user.password)
 
         if(!passwordIsValid){
-            throw new Error("Invalid email or password");
+            throw new UnauthorizedError("Invalid email or password");
         }
 
         const token = jwt.sign(

@@ -1,4 +1,5 @@
 import prisma from "../config/db.js";
+import { BadRequestError, NotFoundError } from "../shared/errors.js";
 
 export class OrdersService{
      async createOrder(userId: number, items: {productId: number, quantity: number}[]){
@@ -12,11 +13,11 @@ export class OrdersService{
                 })
 
                 if(!product){
-                    throw new Error(`Product with id ${item.productId} not found`);
+                    throw new NotFoundError(`Product with id ${item.productId} not found`);
                 }
 
                 if(item.quantity > product.quantity){
-                    throw new Error(`Insufficient stock for product ${product.name}. Available: ${product.quantity}`);
+                    throw new BadRequestError(`Insufficient stock for product ${product.name}. Available: ${product.quantity}`);
                 }
 
                 totalPrice += Number(product.price) * item.quantity

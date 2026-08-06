@@ -1,11 +1,11 @@
-import type { Request, Response } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { validateLogin, validateRegister } from "./authValidator.js";
 import { AuthService } from "./authService.js";
 
 const authService = new AuthService()
 
 export class AuthController{
-    async register(req: Request, res: Response){
+    async register(req: Request, res: Response, next: NextFunction){
         try {
             validateRegister(req.body)
 
@@ -15,11 +15,11 @@ export class AuthController{
                 data: newUser
             })
         } catch (error: any) {            
-            return res.status(400).json({error: error.message})
+            next(error)
         }
     }
 
-    async login(req: Request, res: Response){
+    async login(req: Request, res: Response, next: NextFunction){
         try {
             validateLogin(req.body)
 
@@ -30,7 +30,7 @@ export class AuthController{
             })
             
         } catch (error: any) {
-            return res.status(400).json({error: error.message})
+            next(error)
         }
     }
 
